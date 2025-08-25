@@ -97,5 +97,6 @@ Browser closed safely
 - Ensure `.env` file is **never committed** to version control.
 - If using Gmail, you may need to enable "App Passwords" or adjust SMTP settings.
 - This script is meant for **internal automation** and should comply with your organization’s policies.
+- **Should not be used without permission** on any web application.
 
 ---
