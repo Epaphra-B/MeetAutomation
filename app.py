@@ -14,9 +14,9 @@ import traceback
 
 # --- Load environment variables ---
 if load_dotenv():
-    print("✅ Loaded .env file successfully")
+    print("Loaded .env file successfully")
 else:
-    sys.exit("❌ Error: .env file not found or could not be loaded.")
+    sys.exit("Error: .env file not found or could not be loaded.")
 
 
 # --- Environment variables ---
@@ -45,7 +45,7 @@ def run(playwright):
         # --- Login ---
         page.goto(MEET_URL)
         page.wait_for_load_state("networkidle")
-        print("✅ Opened login page")
+        print("Opened login page")
 
         page.fill('input[name="email"]', USERNAME)
         page.fill('input[name="password"]', PASSWORD)
@@ -53,12 +53,12 @@ def run(playwright):
         page.wait_for_timeout(5000)
 
         page.wait_for_load_state("networkidle", timeout=10000)
-        print("✅ Logged in successfully")
+        print("Logged in successfully")
 
         # --- Navigate to failed meetings ---
         page.goto(FAILED_MEET_URL)
         page.wait_for_load_state("networkidle")
-        print("✅ Navigated to failed meetings page")
+        print("Navigated to failed meetings page")
 
         # --- Select date filter ---
         dates = select_date(page, DAY_FREQUENCY)
@@ -68,19 +68,19 @@ def run(playwright):
         data = go_through_all_pages(page)
 
         if data:
-            print("✅ Report sent via email")
+            print("Report sent via email")
         else:
-            print("⚠️ No failed meetings data to recorded")
+            print("No failed meetings data to recorded")
         
         # --- Send report via email ---
         send_excel_email(SENDER_EMAIL, RECEIVER_EMAIL, SENDER_EMAIL_PASS, data, dates)
         
 
     except PlaywrightTimeoutError as e:
-        print(f"⏳ Timeout error occurred: {e}")
+        print(f"Timeout error occurred: {e}")
         traceback.print_exc()
     except Exception as e:
-        print(f"❌ An unexpected error occurred: {e}")
+        print(f"An unexpected error occurred: {e}")
         traceback.print_exc()
     finally:
         # --- Ensure logout before closing ---
@@ -89,15 +89,15 @@ def run(playwright):
                 page.goto(PROFILE_MEET_URL)
                 page.wait_for_load_state("networkidle", timeout=5000)
                 page.locator("button:has-text('Logout')").click()
-                print("✅ Logged out successfully")
+                print("Logged out successfully")
         except Exception as e:
-            print(f"⚠️ Could not log out properly: {e}")
+            print(f"Could not log out properly: {e}")
         finally:
             if context:
                 context.close()
             if browser:
                 browser.close()
-            print("🔒 Browser closed safely")
+            print("Browser closed safely")
 
 
 def select_date(page, days_before):
@@ -145,7 +145,7 @@ def print_pagination_info(page):
 def go_through_all_pages(page):
     """Iterates over all pagination pages and collects meeting data."""
     if page.locator("text=No failed meetings found").is_visible():
-        print("ℹ️ No failed meetings found")
+        print("No failed meetings found")
         return None
 
     summary_text = page.locator("nav[aria-label='Table navigation'] span").nth(0).inner_text()
@@ -158,13 +158,13 @@ def go_through_all_pages(page):
     per_page = end - start + 1
     total_pages = math.ceil(total / per_page)
 
-    print(f"📊 Total records: {total}, Per page: {per_page}, Pages: {total_pages}")
+    print(f"Total records: {total}, Per page: {per_page}, Pages: {total_pages}")
 
     all_data = []
 
     for page_num in range(1, total_pages + 1):
         page.wait_for_load_state("networkidle")
-        print(f"➡️ Processing page {page_num} of {total_pages}")
+        print(f"Processing page {page_num} of {total_pages}")
         button = page.locator(f"nav[aria-label='Table navigation'] >> text='{page_num}'")
         button.click()
         page.wait_for_load_state("networkidle")
@@ -178,7 +178,7 @@ def convert_to_excel(data):
     df = pd.DataFrame(data)
     excel_buffer = BytesIO()
     df.to_excel(excel_buffer, index=False, engine="openpyxl")
-    print(f"✅ Data saved with {len(df)} rows")
+    print(f"Data saved with {len(df)} rows")
     return excel_buffer
 
 
